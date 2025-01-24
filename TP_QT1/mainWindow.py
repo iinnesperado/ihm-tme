@@ -53,7 +53,8 @@ class MainWindow(QMainWindow):
 		print("Opening file...")
 		fileName = QFileDialog.getOpenFileName(self, "Open File", "~/androide", "*.txt")
 		print(f"{fileName[0]=}")
-		file = open(fileName[0],"w")
+		file = open(fileName[0],"r+")
+		QTextEdit.setPlainText(file.read())
 		
 
 

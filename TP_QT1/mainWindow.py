@@ -19,8 +19,8 @@ class MainWindow(QMainWindow):
 		self.open()
 		self.save()
 		self.quit()
-		textEdit = QTextEdit(self)
-		self.setCentralWidget(textEdit)
+		self.textEdit = QTextEdit(self)
+		self.setCentralWidget(self.textEdit)
 
 	###############
 	def open(self):
@@ -53,7 +53,10 @@ class MainWindow(QMainWindow):
 		print("Opening file...")
 		fileName = QFileDialog.getOpenFileName(self, "Open File", "~/androide", "*.txt")
 		print(f"{fileName[0]=}")
-		file = open(fileName[0],"w")
+		file = open(fileName[0],"r")
+		content = file.read()
+		print(content)
+		self.textEdit.setPlainText(content)
 		
 
 
@@ -61,6 +64,8 @@ class MainWindow(QMainWindow):
 		print("Saving file...")
 		fileName = QFileDialog.getSaveFileName(self, "Save File")
 		print(f"{fileName[0]=}")
+		file = open(fileName[0],"w")
+		file.write(self.textEdit.toPlainText())
 
 	def quitFile(self):
 		print("Quitting file...")

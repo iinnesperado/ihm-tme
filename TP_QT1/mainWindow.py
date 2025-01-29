@@ -57,8 +57,6 @@ class MainWindow(QMainWindow):
 		content = file.read()
 		print(content)
 		self.textEdit.setPlainText(content)
-		
-
 
 	def saveFile(self):
 		print("Saving file...")

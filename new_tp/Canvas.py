@@ -4,15 +4,16 @@ from PySide6.QtCore import *
 
 
 class Canvas(QWidget):
+    colorChanged = Signal()
 
     def __init__(self, parent = None):
         print("class Canvas")
         super().__init__()
         self.setMinimumSize(400,300)
-        self.setMouseTracking(True)
-        self.cursorPos = None
         self.pStart = None
         self.pEnd = None
+
+        self.color = 0
 
 
     def reset(self):
@@ -23,12 +24,14 @@ class Canvas(QWidget):
 
     def set_color(self, color ):
         print("set color")
+        self.color = color
+        self.colorChanged.emit(self.color)
     
     def paintEvent(self,event):
         painter = QPainter(self)
-        # painter.setBrush(Qt.blue)
+        painter.setPen(Qt.blue)
         # painter.drawRect(5,5,120,40)
-        if self.cursorPos != None and self.pStart != None and self.pEnd != None :
+        if self.pStart != None and self.pEnd != None :
             painter.drawRect(self.pStart.x(),self.pStart.y(),
                              self.pEnd.x()-self.pStart.x(),
                              self.pEnd.y()-self.pStart.y())
@@ -36,11 +39,17 @@ class Canvas(QWidget):
         return
     
     def mousePressEvent(self, event):
+        self.setMouseTracking(True)
         self.pStart = event.pos()
+        self.update()
     
     def mouseReleaseEvent(self, event):
         self.pEnd = event.pos()
+        self.setMouseTracking(False)
+        self.pStart = None
+        self.pEnd = None
+
     
     def mouseMoveEvent(self, event): 
-        self.cursorPos = event.pos()
+        self.pEnd = event.pos()
         self.update()

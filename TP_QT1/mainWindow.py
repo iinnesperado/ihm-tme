@@ -67,6 +67,23 @@ class MainWindow(QMainWindow):
 
 	def quitFile(self):
 		print("Quitting file...")
+		dlg = QMessageBox(self)
+		dlg.setWindowTitle("Quit")
+		dlg.setText("Do you wanna quit")
+		dlg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+		dlg.setIcon(QMessageBox.Question)
+		button = dlg.exec()
+
+		if button == QMessageBox.Yes:
+			print("Yes!")
+			QApplication.quit()
+		else:
+			print("No!")
+			return "no"
+
+	def closeEvent(self, event):
+		event.ignore()
+		q = self.quitFile()
 
 
 def main(args):

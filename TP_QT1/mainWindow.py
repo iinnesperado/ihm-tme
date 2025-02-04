@@ -22,6 +22,27 @@ class MainWindow(QMainWindow):
 		self.textEdit = QTextEdit(self)
 		self.setCentralWidget(self.textEdit)
 
+		label = QLabel("I'm working late cuz i'm a singerrrr")
+		
+		button = QRadioButton("That's that me espresso")
+		button2 = QRadioButton("That's that me decafeino")
+		layout = QVBoxLayout()
+		layout.addWidget(label)
+		label.setAlignment(
+            Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter
+        )
+		layout.addWidget(self.textEdit)
+		layout.addWidget(button)
+		layout.addWidget(button2)
+		widget = QWidget()
+		widget.setLayout(layout)
+		self.setCentralWidget(widget)
+
+		#group = QButtonGroup(widget)
+		#group.addButton(button)
+		#group.addButton(button2)
+		
+
 	###############
 	def open(self):
 		print("Open...")

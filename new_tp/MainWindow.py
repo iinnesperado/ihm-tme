@@ -139,6 +139,7 @@ class MainWindow(QMainWindow):
 
     def select(self):
         self.log_action("Mode: select")
+        self.canva.setMode("select")
 
     def log_action(self, str):
         content = self.textEdit.toPlainText()

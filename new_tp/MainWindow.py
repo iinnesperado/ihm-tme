@@ -109,24 +109,33 @@ class MainWindow(QMainWindow):
     ##############
     def pen_color(self):
         self.log_action("choose pen color")
+        color = QColorDialog.getColor()
+        self.canva.set_colorPen(color)
 
     def brush_color(self):
         self.log_action("choose brush color")
+        color = QColorDialog.getColor()
+        self.canva.set_colorBrush(color)
 
     def rectangle(self):
         self.log_action("Shape mode: rectangle")
+        self.canva.add_object("rectangle")
+
 
     def ellipse(self):
         self.log_action("Shape Mode: circle")
+        self.canva.add_object("ellipse")
 
     def free_drawing(self):
         self.log_action("Shape mode: free drawing")
 
     def move(self):
         self.log_action("Mode: move")
+        self.canva.setMode("move")
 
     def draw(self):
         self.log_action("Mode: draw")
+        self.canva.setMode("draw")
 
     def select(self):
         self.log_action("Mode: select")

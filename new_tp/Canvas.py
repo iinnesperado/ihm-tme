@@ -46,17 +46,17 @@ class Canvas(QWidget):
                 elif shape == "ellipse":
                     painter.drawEllipse(QRect(pStart, pEnd))
         
-        switch self.mopde : # TODO resoudre problème avec le switch
-            case "draw":
-                if self.pStart and self.pEnd : # pour dessiner la forme en cours
-                    painter.setPen(QColor(self.colorPen))
-                    painter.setBrush(QColor(self.colorBrush)) if self.colorBrush != 0 else painter.setBrush(Qt.NoBrush)
-                    if self.shape == "rectangle":
-                        painter.drawRect(QRect(self.pStart, self.pEnd))
-                    elif self.shape == "ellipse":
-                        painter.drawEllipse(QRect(self.pStart, self.pEnd))
-            case "move":
-                painter.translate(60,60)
+        '''switch self.mopde : # TODO resoudre problème avec le switch
+            case "draw":'''
+        if self.pStart and self.pEnd : # pour dessiner la forme en cours
+            painter.setPen(QColor(self.colorPen))
+            painter.setBrush(QColor(self.colorBrush)) if self.colorBrush != 0 else painter.setBrush(Qt.NoBrush)
+            if self.shape == "rectangle":
+                painter.drawRect(QRect(self.pStart, self.pEnd))
+            elif self.shape == "ellipse":
+                painter.drawEllipse(QRect(self.pStart, self.pEnd))
+            '''case "move":
+                painter.translate(60,60)'''
             
 
         painter.end()

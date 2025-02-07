@@ -112,6 +112,19 @@ class MainWindow(QMainWindow):
 
     def quitFile(self):
         print("Quitting file...") # TODO activate the quit function
+        dlg = QMessageBox(self)
+        dlg.setWindowTitle("Quit")
+        dlg.setText("Do you wanna quit ?")
+        dlg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        dlg.setIcon(QMessageBox.Question)
+        button = dlg.exec()
+
+        if button == QMessageBox.Yes:
+            print("Yes!")
+            QApplication.quit()
+        else:
+            print("No!")
+            return "no"
 
 
 
@@ -158,7 +171,18 @@ class MainWindow(QMainWindow):
 
     def clearAll(self):
         self.log_action("Mode: clear all drawings")
-        self.canva.clearAll()
+        dlg = QMessageBox(self)
+        dlg.setWindowTitle("Clear all")
+        dlg.setText("Do you want to clear the canvas ?")
+        dlg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        dlg.setIcon(QMessageBox.Question)
+        button = dlg.exec()
+        if button == QMessageBox.Yes:
+            print("Yes!")
+            self.canva.clearAll()
+        else:
+            print("No!")
+            return "no"
 
     def log_action(self, str):
         content = self.textEdit.toPlainText()

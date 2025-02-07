@@ -51,8 +51,6 @@ class Canvas(QWidget):
     
     def paintEvent(self,event):
         painter = QPainter(self)
-        pen = QPen()
-        brush = QBrush()
         if self.mode == "move":
             painter.translate(self.offset)
             
@@ -65,8 +63,8 @@ class Canvas(QWidget):
         
         for o in self.obj: # pour redessiner les formes deja dessinées
             shape, pStart, pEnd, colorPen, colorBrush = o
-            pen.setColor(QColor(colorPen))
-            brush.setColor(QColor(colorBrush)) if colorBrush != 0 else brush.setColor(Qt.NoBrush)
+            painter.setPen(QColor(colorPen))
+            painter.setBrush(QColor(colorBrush)) if colorBrush != 0 else painter.setBrush(Qt.NoBrush)
             if shape == "rectangle":
                 painter.drawRect(QRect(pStart, pEnd))
             elif shape == "ellipse":
@@ -76,21 +74,20 @@ class Canvas(QWidget):
         
         if self.mode == "draw" :
             if  self.pStart and self.pEnd : # pour dessiner la forme en cours
-                pen.setColor(QColor(colorPen))
-                brush.setColor(QColor(colorBrush)) if colorBrush != 0 else brush.setColor(Qt.NoBrush)
-            if self.shape == "rectangle":
-                painter.drawRect(QRect(self.pStart, self.pEnd))
-            elif self.shape == "ellipse":
-                painter.drawEllipse(QRect(self.pStart, self.pEnd))
+                painter.setPen(QColor(self.colorPen))
+                painter.setBrush(QColor(self.colorBrush)) if self.colorBrush != 0 else painter.setBrush(Qt.NoBrush)
+                if self.shape == "rectangle":
+                    painter.drawRect(QRect(self.pStart, self.pEnd))
+                elif self.shape == "ellipse":
+                    painter.drawEllipse(QRect(self.pStart, self.pEnd))
                 '''elif self.shape == "free":
                     if self.pPrevious:
                         painter.drawLine(self.pPrevious, self.pCurrent)
                     else : 
                         painter.drawPoint(self.pCurrent)
                     self.pPrevious = self.pCurrent'''
-            if self.shape == "free":
-                painter.drawPoint(self.pCurrent)
-        
+                if self.shape == "free":
+                    painter.drawPoint(self.pCurrent)
         elif self.mode == "lasso":
             painter.setPen(QColor.grey)
             painter.setStyle(Qt.DashLine)

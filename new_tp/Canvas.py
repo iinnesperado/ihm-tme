@@ -25,6 +25,12 @@ class Canvas(QWidget):
         self.pCurrent = None
         self.cur_obj = None
 
+        self.free_drawings = [] 
+        self.current_path = None
+
+        self.lasso = QPolygon()
+        self.laso_selection =  False
+
 
     def reset(self):
         print("reset")
@@ -32,7 +38,6 @@ class Canvas(QWidget):
     def add_object(self, obj:str):
         print("add object")
         self.shape=obj
-
 
     def set_colorPen(self, color):
         print("set color")
@@ -45,15 +50,17 @@ class Canvas(QWidget):
     def setMode(self, mode:str):
         self.mode = mode
     
-    def clearAll(self):
+    def clearCanvas(self):
         self.obj = []
+        self.lasso = QPolygon()
+        self.lasso_selection = False
         self.update()
     
+    #### paint event
     def paintEvent(self,event):
         painter = QPainter(self)
         if self.mode == "move":
             painter.translate(self.offset)
-            
 
         if self.cur_obj is not None: # pour changer la forme selectionnée
             self.obj[self.cur_obj][3] = QColor(self.colorPen)
@@ -80,17 +87,16 @@ class Canvas(QWidget):
                     painter.drawRect(QRect(self.pStart, self.pEnd))
                 elif self.shape == "ellipse":
                     painter.drawEllipse(QRect(self.pStart, self.pEnd))
-                '''elif self.shape == "free":
-                    if self.pPrevious:
-                        painter.drawLine(self.pPrevious, self.pCurrent)
-                    else : 
-                        painter.drawPoint(self.pCurrent)
-                    self.pPrevious = self.pCurrent'''
-                if self.shape == "free":
-                    painter.drawPoint(self.pCurrent)
+                elif self.shape == "free" and self.current_path:
+                    # painter.setPen(QColor(self.colorPen))
+                    for i in range(1, len(self.current_path)):
+                        painter.drawLine(self.current_path[i - 1], self.current_path[i])
+            
         elif self.mode == "lasso":
-            painter.setPen(QColor.grey)
-            painter.setStyle(Qt.DashLine)
+            painter.setPen(Qt.gray)
+            painter.setPen(Qt.DashLine)
+            if not self.lasso.isEmpty():
+                painter.drawPolygon(self.lasso)
 
         painter.end()
 
@@ -100,7 +106,10 @@ class Canvas(QWidget):
         if self.mode == "move":
             self.lastPos = event.pos()
         elif self.mode == "draw":
-            self.pStart = event.pos()
+            if self.shape == "free":
+                self.current_path = [event.pos()]
+            else:
+                self.pStart = event.pos()
         elif self.mode == "select":
             self.cur_obj = None
             for i, (_, pStart, pEnd, _, _) in enumerate(self.obj):
@@ -109,6 +118,8 @@ class Canvas(QWidget):
                     self.cur_obj = i
                     print("selected ", self.obj[i])
                     break
+        '''elif self.mode == "lasso":
+            self.lasso.append(event.pos())'''
         self.update()
     
     def mouseReleaseEvent(self, event):
@@ -120,6 +131,9 @@ class Canvas(QWidget):
             self.obj.append([self.shape,self.pStart, self.pEnd,self.colorPen,self.colorBrush])
             self.pStart = None
             self.pEnd = None
+            if self.current_path and self.shape == "free":
+                self.free_drawings.append((self.current_path, self.colorPen, self.colorBrush))  # Sauvegarde le tracé
+                self.current_path = None
         self.update()
 
     
@@ -131,7 +145,9 @@ class Canvas(QWidget):
             self.obj = [[shape, pStart + pos, pEnd + pos, colorPen, colorBrush] 
                     for shape, pStart, pEnd, colorPen, colorBrush in self.obj]
         elif self.mode == "draw":
-            self.pEnd = event.pos()
             if self.shape == "free":
-                self.pCurrent = event.pos()
+                self.current_path.append(event.pos()) 
+            else:
+                self.pEnd = event.pos()
+
         self.update()

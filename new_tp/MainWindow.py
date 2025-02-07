@@ -8,8 +8,9 @@ import resources
 class MainWindow(QMainWindow):
 
     def __init__(self, parent = None ):
-        QMainWindow.__init__(self, parent )
-        print( "init mainwindow")
+        QMainWindow.__init__(self, parent)
+        self.setWindowTitle("Untitled")
+        print("init mainwindow")
         self.resize(600, 500)
         
         self.canva = Canvas()
@@ -63,11 +64,11 @@ class MainWindow(QMainWindow):
         modeToolBar.addAction( actLasso )
 
         optionsMenu = bar.addMenu("Options")
-        actClearAll = optionsMenu.addAction(QIcon(":/icons/clear-all.png"), "&Clear all", self.clearAll)
+        actClearCanvas = optionsMenu.addAction(QIcon(":/icons/clear-all.png"), "&Clear canvas", self.clearCanvas)
 
         optionsToolBar = QToolBar("Options")
         self.addToolBar( optionsToolBar )
-        optionsToolBar.addAction( actClearAll )
+        optionsToolBar.addAction( actClearCanvas )
 
     def open(self):
         print("Open...")
@@ -95,23 +96,24 @@ class MainWindow(QMainWindow):
         newAct.triggered.connect(self.quitFile)
 
     def openFile(self):
-        print("Opening file...")
+        self.log_action("Opening file...")
         fileName = QFileDialog.getOpenFileName(self, "Open File", "~/androide", "*.txt")
         print(f"{fileName[0]=}")
         file = open(fileName[0],"r")
         content = file.read()
         print(content)
-        self.textEdit.setPlainText(content) # TODO change to drawing style file
+        self.textEdit.setPlainText(content)
+        self.setWindowTitle(fileName[0])
 
     def saveFile(self):
         print("Saving file...")
         fileName = QFileDialog.getSaveFileName(self, "Save File")
         print(f"{fileName[0]=}")
         file = open(fileName[0],"w")
-        file.write(self.textEdit.toPlainText()) # TODO change 
+        file.write(self.textEdit.toPlainText())
 
     def quitFile(self):
-        print("Quitting file...") # TODO activate the quit function
+        print("Quitting file...")
         dlg = QMessageBox(self)
         dlg.setWindowTitle("Quit")
         dlg.setText("Do you wanna quit ?")
@@ -133,6 +135,7 @@ class MainWindow(QMainWindow):
         self.log_action("choose pen color")
         color = QColorDialog.getColor()
         self.canva.set_colorPen(color)
+        self.log_action("Pen color: " + str(color))
 
     def brush_color(self):
         self.log_action("choose brush color")
@@ -143,7 +146,6 @@ class MainWindow(QMainWindow):
     def rectangle(self):
         self.log_action("Shape mode: rectangle")
         self.canva.add_object("rectangle")
-
 
     def ellipse(self):
         self.log_action("Shape Mode: circle")
@@ -169,7 +171,7 @@ class MainWindow(QMainWindow):
         self.log_action("Mode: lasso")
         self.canva.setMode("lasso")
 
-    def clearAll(self):
+    def clearCanvas(self):
         self.log_action("Mode: clear all drawings")
         dlg = QMessageBox(self)
         dlg.setWindowTitle("Clear all")
@@ -179,7 +181,8 @@ class MainWindow(QMainWindow):
         button = dlg.exec()
         if button == QMessageBox.Yes:
             print("Yes!")
-            self.canva.clearAll()
+            self.canva.clearCanvas()
+            self.textEdit.clear()
         else:
             print("No!")
             return "no"

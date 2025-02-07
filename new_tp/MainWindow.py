@@ -30,8 +30,8 @@ class MainWindow(QMainWindow):
         self.save()
         self.quit()
 
-        actPen = self.fileMenu.addAction(QIcon(":/icons/pen.png"), "&Pen color", self.pen_color, QKeySequence("Ctrl+P"))
-        actBrush = self.fileMenu.addAction(QIcon(":/icons/brush.png"), "&Brush color", self.brush_color, QKeySequence("Ctrl+B"))
+        actPen = colorMenu.addAction(QIcon(":/icons/pen.png"), "&Pen color", self.pen_color, QKeySequence("Ctrl+P"))
+        actBrush = colorMenu.addAction(QIcon(":/icons/brush.png"), "&Brush color", self.brush_color, QKeySequence("Ctrl+B"))
 
         colorToolBar = QToolBar("Color")
         self.addToolBar( colorToolBar )
@@ -53,14 +53,21 @@ class MainWindow(QMainWindow):
         actMove = modeMenu.addAction(QIcon(":/icons/move.png"), "&Move", self.move)
         actDraw = modeMenu.addAction(QIcon(":/icons/draw.png"), "&Draw", self.draw)
         actSelect = modeMenu.addAction(QIcon(":/icons/select.png"), "&Select", self.select)
-        actClearAll = modeMenu.addAction(QIcon(":/icons/clearall.png"), "&Clear all", self.clearAll)
+        actLasso = modeMenu.addAction(QIcon(":/icons/lasso.png"), "&Lasso", self.lasso)
 
         modeToolBar = QToolBar("Navigation")
         self.addToolBar( modeToolBar )
         modeToolBar.addAction( actMove )
         modeToolBar.addAction( actDraw )
         modeToolBar.addAction( actSelect )
-        modeToolBar.addAction( actClearAll )
+        modeToolBar.addAction( actLasso )
+
+        optionsMenu = bar.addMenu("Options")
+        actClearAll = optionsMenu.addAction(QIcon(":/icons/clear-all.png"), "&Clear all", self.clearAll)
+
+        optionsToolBar = QToolBar("Options")
+        self.addToolBar( optionsToolBar )
+        optionsToolBar.addAction( actClearAll )
 
     def open(self):
         print("Open...")
@@ -144,6 +151,10 @@ class MainWindow(QMainWindow):
     def select(self):
         self.log_action("Mode: select")
         self.canva.setMode("select")
+
+    def lasso(self):
+        self.log_action("Mode: lasso")
+        self.canva.setMode("lasso")
 
     def clearAll(self):
         self.log_action("Mode: clear all drawings")

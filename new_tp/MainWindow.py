@@ -116,6 +116,7 @@ class MainWindow(QMainWindow):
         self.log_action("choose brush color")
         color = QColorDialog.getColor()
         self.canva.set_colorBrush(color)
+        self.log_action("Brush color: " + str(color))
 
     def rectangle(self):
         self.log_action("Shape mode: rectangle")
@@ -128,6 +129,7 @@ class MainWindow(QMainWindow):
 
     def free_drawing(self):
         self.log_action("Shape mode: free drawing")
+        self.canva.add_object("free")
 
     def move(self):
         self.log_action("Mode: move")

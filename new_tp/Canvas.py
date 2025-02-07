@@ -49,6 +49,7 @@ class Canvas(QWidget):
         if self.cur_obj is not None: # pour changer la forme selectionnée
             self.obj[self.cur_obj][3] = QColor(self.colorPen)
             self.obj[self.cur_obj][4] = QColor(self.colorBrush)
+            self.obj[self.cur_obj][0] = self.shape
             
         
         for o in self.obj: # pour redessiner les formes deja dessinées
@@ -59,6 +60,8 @@ class Canvas(QWidget):
                 painter.drawRect(QRect(pStart, pEnd))
             elif shape == "ellipse":
                 painter.drawEllipse(QRect(pStart, pEnd))
+            elif shape == "free":
+                painter.drawLine(pStart, pEnd)
         
         if self.mode == "draw":
             if self.pStart and self.pEnd : # pour dessiner la forme en cours
@@ -68,7 +71,8 @@ class Canvas(QWidget):
                     painter.drawRect(QRect(self.pStart, self.pEnd))
                 elif self.shape == "ellipse":
                     painter.drawEllipse(QRect(self.pStart, self.pEnd))
-            
+                elif self.shape == "free":
+                    painter.drawLine(self.pStart, self.pEnd)
 
         painter.end()
     

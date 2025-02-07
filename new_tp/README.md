@@ -13,3 +13,7 @@ Groupe : Ines Rahaoui et Inés Tian Ruiz-Bravo Plovins
 - No Brush Option (Only in Option bar menu and not in Tool bar)
     - Takes off the coloring of the following figures
     - Also works to take off coloring of selected figures with lasso
+- Open, Save log file (txt format)
+    - You can save and open a log file in txt format into the app
+- Quit confirmation window when using the file menu or the Ctr+W shortcut
+    - Confirmation window comes up when closing the window

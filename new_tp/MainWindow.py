@@ -39,9 +39,9 @@ class MainWindow(QMainWindow):
         colorToolBar.addAction( actBrush )
 
         shapeMenu = bar.addMenu("Shape")
-        actRectangle = self.fileMenu.addAction(QIcon(":/icons/rectangle.png"), "&Rectangle", self.rectangle )
-        actEllipse = self.fileMenu.addAction(QIcon(":/icons/ellipse.png"), "&Ellipse", self.ellipse)
-        actFree = self.fileMenu.addAction(QIcon(":/icons/free.png"), "&Free drawing", self.free_drawing)
+        actRectangle = shapeMenu.addAction(QIcon(":/icons/rectangle.png"), "&Rectangle", self.rectangle )
+        actEllipse = shapeMenu.addAction(QIcon(":/icons/ellipse.png"), "&Ellipse", self.ellipse)
+        actFree = shapeMenu.addAction(QIcon(":/icons/free.png"), "&Free drawing", self.free_drawing)
 
         shapeToolBar = QToolBar("Shape")
         self.addToolBar( shapeToolBar )
@@ -53,12 +53,14 @@ class MainWindow(QMainWindow):
         actMove = modeMenu.addAction(QIcon(":/icons/move.png"), "&Move", self.move)
         actDraw = modeMenu.addAction(QIcon(":/icons/draw.png"), "&Draw", self.draw)
         actSelect = modeMenu.addAction(QIcon(":/icons/select.png"), "&Select", self.select)
+        actClearAll = modeMenu.addAction(QIcon(":/icons/clearall.png"), "&Clear all", self.clearAll)
 
         modeToolBar = QToolBar("Navigation")
         self.addToolBar( modeToolBar )
         modeToolBar.addAction( actMove )
         modeToolBar.addAction( actDraw )
         modeToolBar.addAction( actSelect )
+        modeToolBar.addAction( actClearAll )
 
     def open(self):
         print("Open...")
@@ -102,7 +104,7 @@ class MainWindow(QMainWindow):
         file.write(self.textEdit.toPlainText()) # TODO change 
 
     def quitFile(self):
-        print("Quitting file...")
+        print("Quitting file...") # TODO activate the quit function
 
 
 
@@ -142,6 +144,10 @@ class MainWindow(QMainWindow):
     def select(self):
         self.log_action("Mode: select")
         self.canva.setMode("select")
+
+    def clearAll(self):
+        self.log_action("Mode: clear all drawings")
+        self.canva.clearAll()
 
     def log_action(self, str):
         content = self.textEdit.toPlainText()

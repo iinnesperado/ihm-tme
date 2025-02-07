@@ -78,7 +78,12 @@ class Canvas(QWidget):
     
     def setMode(self, mode:str):
         self.mode = mode
+    
+    def clearAll(self):
+        self.obj = []
+        self.update()
 
+    #### mouse events
     def mousePressEvent(self, event):
         self.setMouseTracking(True)
         if self.mode == "move":

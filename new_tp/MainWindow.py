@@ -73,7 +73,7 @@ class MainWindow(QMainWindow):
 
     def open(self):
         print("Open...")
-        newAct = QAction(QIcon("~/androide/ihm203/TP_QT1/open.pgn"), " Open...", self)
+        newAct = QAction(QIcon(":/icons/open.png"), " Open...", self)
         newAct.setShortcut(QKeySequence("Ctrl+O"))
         newAct.setToolTip("Open an existing file")
         self.fileMenu.addAction(newAct)
@@ -81,7 +81,7 @@ class MainWindow(QMainWindow):
     
     def save(self):
         print("Save")    
-        newAct = QAction(QIcon("~/androide/ihm203/TP_QT1/save.pgn"), " Save...", self)
+        newAct = QAction(QIcon(":/icons/save.png"), " Save...", self)
         newAct.setShortcut(QKeySequence("Ctrl+S"))
         newAct.setToolTip("Save file")
         self.fileMenu.addAction(newAct)
@@ -90,7 +90,7 @@ class MainWindow(QMainWindow):
 
     def quit(self):
         print("Quit")
-        newAct = QAction(QIcon("~/androide/ihm203/TP_QT1/quit.pgn")," Quit...", self)
+        newAct = QAction(QIcon(":/icons/quit.png")," Quit...", self)
         newAct.setShortcut(QKeySequence("Ctrl+W"))
         newAct.setToolTip("Quit open file")
         self.fileMenu.addAction(newAct)
@@ -128,6 +128,10 @@ class MainWindow(QMainWindow):
         else:
             print("No!")
             return "no"
+        
+    def closeEvent(self, event):
+        event.ignore()
+        q = self.quitFile()
 
 
 

@@ -23,6 +23,9 @@ class Canvas(QWidget):
 
         self.cur_obj = None
 
+        self.free_drawings = [] 
+        self.current_path = None
+
 
     def reset(self):
         print("reset")
@@ -47,12 +50,21 @@ class Canvas(QWidget):
             
 
         if self.cur_obj is not None: # pour changer la forme selectionnée
-            self.obj[self.cur_obj][3] = QColor(self.colorPen)
-            self.obj[self.cur_obj][4] = QColor(self.colorBrush)
+            i = self.cur_obj
+            self.obj[i][3] = QColor(self.colorPen)
+            self.obj[i][4] = QColor(self.colorBrush)
+            painter.setPen(QPen(Qt.DashLine))  
+            painter.setBrush(QColor(self.colorBrush))
+            if self.obj[i][0] == "rectangle":
+                painter.drawRect(QRect(self.obj[i][1], self.obj[i][2]))
+            elif self.obj[i][0] == "ellipse":
+                painter.drawEllipse(QRect(self.obj[i][1], self.obj[i][2]))
             
         
         for o in self.obj: # pour redessiner les formes deja dessinées
             shape, pStart, pEnd, colorPen, colorBrush = o
+            if self.mode == "select" and o == self.obj[self.cur_obj]:
+                continue
             painter.setPen(QColor(colorPen))
             painter.setBrush(QColor(colorBrush)) if colorBrush != 0 else painter.setBrush(Qt.NoBrush)
             if shape == "rectangle":
@@ -60,14 +72,24 @@ class Canvas(QWidget):
             elif shape == "ellipse":
                 painter.drawEllipse(QRect(pStart, pEnd))
         
+        for path, colorPen, colorBrush in self.free_drawings:  # Dessiner tous les anciens tracés
+            painter.setPen(QColor(colorPen))
+            painter.setBrush(QColor(colorBrush)) if colorBrush != 0 else painter.setBrush(Qt.NoBrush)
+            for i in range(1, len(path)):
+                painter.drawLine(path[i - 1], path[i])
+        
         if self.mode == "draw":
-            if self.pStart and self.pEnd : # pour dessiner la forme en cours
+            if self.pStart and self.pEnd: # pour dessiner la forme en cours
                 painter.setPen(QColor(self.colorPen))
                 painter.setBrush(QColor(self.colorBrush)) if self.colorBrush != 0 else painter.setBrush(Qt.NoBrush)
                 if self.shape == "rectangle":
                     painter.drawRect(QRect(self.pStart, self.pEnd))
                 elif self.shape == "ellipse":
                     painter.drawEllipse(QRect(self.pStart, self.pEnd))
+            elif self.shape == "free" and self.current_path:
+                painter.setPen(QColor(self.colorPen))
+                for i in range(1, len(self.current_path)):
+                    painter.drawLine(self.current_path[i - 1], self.current_path[i])
             
 
         painter.end()
@@ -80,7 +102,10 @@ class Canvas(QWidget):
         if self.mode == "move":
             self.lastPos = event.pos()
         elif self.mode == "draw":
-            self.pStart = event.pos()
+            if self.shape == "free":
+                self.current_path = [event.pos()]
+            else:
+                self.pStart = event.pos()
         elif self.mode == "select":
             self.cur_obj = None
             for i, (_, pStart, pEnd, _, _) in enumerate(self.obj):
@@ -100,6 +125,9 @@ class Canvas(QWidget):
             self.obj.append([self.shape,self.pStart, self.pEnd,self.colorPen,self.colorBrush])
             self.pStart = None
             self.pEnd = None
+            if self.current_path and self.shape == "free":
+                self.free_drawings.append((self.current_path, self.colorPen, self.colorBrush))  # Sauvegarde le tracé
+                self.current_path = None
         self.update()
 
     
@@ -111,5 +139,8 @@ class Canvas(QWidget):
             self.obj = [[shape, pStart + pos, pEnd + pos, colorPen, colorBrush] 
                     for shape, pStart, pEnd, colorPen, colorBrush in self.obj]
         elif self.mode == "draw":
-            self.pEnd = event.pos()
+            if self.shape == "free":
+                self.current_path.append(event.pos()) 
+            else:
+                self.pEnd = event.pos()
         self.update()

@@ -20,7 +20,7 @@ class Canvas(QWidget):
         self.mode = "draw"
 
         self.offset = QPoint(0,0)
-        self.lastPoint = None
+        self.lastPos = None
 
         self.pPrevious = None
         self.pCurrent = None
@@ -33,7 +33,6 @@ class Canvas(QWidget):
 
         self.lasso = QPolygon()
         self.lasso_selection =  []
-
 
     def reset(self):
         print("reset")
@@ -66,9 +65,15 @@ class Canvas(QWidget):
             painter.translate(self.offset)
 
         if self.cur_obj is not None: # pour changer la forme selectionnée
-            self.obj[self.cur_obj][3] = QColor(self.colorPen)
-            self.obj[self.cur_obj][4] = QColor(self.colorBrush)
-            self.obj[self.cur_obj][0] = self.shape
+            i = self.cur_obj
+            self.obj[i][3] = QColor(self.colorPen)
+            self.obj[i][4] = QColor(self.colorBrush)
+            painter.setPen(QPen(Qt.DashLine))  
+            painter.setBrush(QColor(self.colorBrush))
+            if self.obj[i][0] == "rectangle":
+                painter.drawRect(QRect(self.obj[i][1], self.obj[i][2]))
+            elif self.obj[i][0] == "ellipse":
+                painter.drawEllipse(QRect(self.obj[i][1], self.obj[i][2]))
         
         if self.mode == "lasso":
             painter.setPen(Qt.DashLine)
@@ -81,9 +86,11 @@ class Canvas(QWidget):
                     self.lasso_selection[i][3] = QColor(self.colorPen)
                     self.lasso_selection[i][4] = QColor(self.colorBrush)
                     self.lasso_selection[i][0] = self.shape
-        
+
         for o in self.obj: # pour redessiner les formes deja dessinées
             shape, pStart, pEnd, colorPen, colorBrush = o
+            if self.mode == "select" and o == self.obj[self.cur_obj]:
+                continue
             painter.setPen(QColor(colorPen))
             painter.setBrush(QColor(colorBrush)) if colorBrush != 0 else painter.setBrush(Qt.NoBrush)
             if shape == "rectangle":
@@ -92,20 +99,25 @@ class Canvas(QWidget):
                 painter.drawEllipse(QRect(pStart, pEnd))
             elif shape == "free":
                 painter.drawPoint(pEnd)
+
+        for path, colorPen in self.free_drawings:  # Dessiner tous les anciens tracés
+            painter.setPen(QColor(colorPen))
+            for i in range(1, len(path)):
+                painter.drawLine(path[i - 1], path[i])
         
-        if self.mode == "draw" :
-            if  self.pStart and self.pEnd : # pour dessiner la forme en cours
+        if self.mode == "draw":
+            if self.pStart and self.pEnd: # pour dessiner la forme en cours
                 painter.setPen(QColor(self.colorPen))
                 painter.setBrush(QColor(self.colorBrush)) if self.colorBrush != 0 else painter.setBrush(Qt.NoBrush)
                 if self.shape == "rectangle":
                     painter.drawRect(QRect(self.pStart, self.pEnd))
                 elif self.shape == "ellipse":
                     painter.drawEllipse(QRect(self.pStart, self.pEnd))
-                elif self.shape == "free" and self.current_path:
-                    painter.setPen(QColor(self.colorPen))
-                    for i in range(1, len(self.current_path)):
-                        painter.drawLine(self.current_path[i - 1], self.current_path[i])
-
+            
+            elif self.shape == "free" and self.current_path:
+                painter.setPen(QColor(self.colorPen))
+                for i in range(1, len(self.current_path)):
+                    painter.drawLine(self.current_path[i - 1], self.current_path[i])
         painter.end()
 
     #### mouse events
@@ -136,14 +148,17 @@ class Canvas(QWidget):
         if self.mode == "move":
             self.lastPos = None
         elif self.mode == "draw":
-            self.pEnd = event.pos()
-            #self.setMouseTracking(False)
-            self.obj.append([self.shape,self.pStart, self.pEnd,self.colorPen,self.colorBrush])
-            self.pStart = None
-            self.pEnd = None
             if self.current_path and self.shape == "free":
-                self.free_drawings.append((self.current_path, self.colorPen, self.colorBrush))  # Sauvegarde le tracé
+                self.free_drawings.append((self.current_path, self.colorPen))  # Sauvegarde le tracé
                 self.current_path = None
+            else:
+                self.pEnd = event.pos()
+                self.setMouseTracking(False)
+                self.obj.append([self.shape,self.pStart, self.pEnd,self.colorPen,self.colorBrush])
+                self.pStart = None
+                self.pEnd = None
+            
+        self.setMouseTracking(False)
         self.update()
 
     
@@ -154,10 +169,11 @@ class Canvas(QWidget):
             self.lastPos = event.pos()
             self.obj = [[shape, pStart + pos, pEnd + pos, colorPen, colorBrush] 
                     for shape, pStart, pEnd, colorPen, colorBrush in self.obj]
+            self.free_drawings = [( [p + pos for p in path], colorPen)  
+                              for path, colorPen in self.free_drawings]
         elif self.mode == "draw":
             if self.shape == "free":
                 self.current_path.append(event.pos()) 
             else:
                 self.pEnd = event.pos()
-
         self.update()

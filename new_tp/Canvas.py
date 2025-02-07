@@ -53,7 +53,9 @@ class Canvas(QWidget):
             i = self.cur_obj
             self.obj[i][3] = QColor(self.colorPen)
             self.obj[i][4] = QColor(self.colorBrush)
-            painter.setPen(QPen(Qt.DashLine))  
+            pen = QPen(Qt.DashLine)
+            pen.setColor(QColor(self.colorPen))
+            painter.setPen(pen)  
             painter.setBrush(QColor(self.colorBrush))
             if self.obj[i][0] == "rectangle":
                 painter.drawRect(QRect(self.obj[i][1], self.obj[i][2]))
@@ -63,8 +65,9 @@ class Canvas(QWidget):
         
         for o in self.obj: # pour redessiner les formes deja dessinées
             shape, pStart, pEnd, colorPen, colorBrush = o
-            if self.mode == "select" and o == self.obj[self.cur_obj]:
-                continue
+            if self.mode == "select":
+                if o == self.obj[self.cur_obj]:
+                    continue
             painter.setPen(QColor(colorPen))
             painter.setBrush(QColor(colorBrush)) if colorBrush != 0 else painter.setBrush(Qt.NoBrush)
             if shape == "rectangle":

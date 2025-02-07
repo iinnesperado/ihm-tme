@@ -65,6 +65,7 @@ class MainWindow(QMainWindow):
 
         optionsMenu = bar.addMenu("Options")
         actClearCanvas = optionsMenu.addAction(QIcon(":/icons/clear-all.png"), "&Clear canvas", self.clearCanvas)
+        actNoBrush = optionsMenu.addAction("&No brush", self.clearBrush)
 
         optionsToolBar = QToolBar("Options")
         self.addToolBar( optionsToolBar )
@@ -166,6 +167,10 @@ class MainWindow(QMainWindow):
     def select(self):
         self.log_action("Mode: select")
         self.canva.setMode("select")
+    
+    def clearBrush(self):
+        self.log_action("Mode: clear brush")
+        self.canva.set_colorBrush(0)
 
     def lasso(self):
         self.log_action("Mode: lasso")

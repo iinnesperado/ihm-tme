@@ -66,6 +66,7 @@ class Canvas(QWidget):
 
         if self.cur_obj is not None: # pour changer la forme selectionnée
             i = self.cur_obj
+            print("selected ", self.obj[i])
             self.obj[i][3] = QColor(self.colorPen)
             self.obj[i][4] = QColor(self.colorBrush)
             painter.setPen(QPen(Qt.DashLine))  

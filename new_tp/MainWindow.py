@@ -8,8 +8,9 @@ import resources
 class MainWindow(QMainWindow):
 
     def __init__(self, parent = None ):
-        QMainWindow.__init__(self, parent )
-        print( "init mainwindow")
+        QMainWindow.__init__(self, parent)
+        self.setWindowTitle("Untitled")
+        print("init mainwindow")
         self.resize(600, 500)
         
         self.canva = Canvas()
@@ -30,8 +31,8 @@ class MainWindow(QMainWindow):
         self.save()
         self.quit()
 
-        actPen = self.fileMenu.addAction(QIcon(":/icons/pen.png"), "&Pen color", self.pen_color, QKeySequence("Ctrl+P"))
-        actBrush = self.fileMenu.addAction(QIcon(":/icons/brush.png"), "&Brush color", self.brush_color, QKeySequence("Ctrl+B"))
+        actPen = colorMenu.addAction(QIcon(":/icons/pen.png"), "&Pen color", self.pen_color, QKeySequence("Ctrl+P"))
+        actBrush = colorMenu.addAction(QIcon(":/icons/brush.png"), "&Brush color", self.brush_color, QKeySequence("Ctrl+B"))
 
         colorToolBar = QToolBar("Color")
         self.addToolBar( colorToolBar )
@@ -39,9 +40,9 @@ class MainWindow(QMainWindow):
         colorToolBar.addAction( actBrush )
 
         shapeMenu = bar.addMenu("Shape")
-        actRectangle = self.fileMenu.addAction(QIcon(":/icons/rectangle.png"), "&Rectangle", self.rectangle )
-        actEllipse = self.fileMenu.addAction(QIcon(":/icons/ellipse.png"), "&Ellipse", self.ellipse)
-        actFree = self.fileMenu.addAction(QIcon(":/icons/free.png"), "&Free drawing", self.free_drawing)
+        actRectangle = shapeMenu.addAction(QIcon(":/icons/rectangle.png"), "&Rectangle", self.rectangle )
+        actEllipse = shapeMenu.addAction(QIcon(":/icons/ellipse.png"), "&Ellipse", self.ellipse)
+        actFree = shapeMenu.addAction(QIcon(":/icons/free.png"), "&Free drawing", self.free_drawing)
 
         shapeToolBar = QToolBar("Shape")
         self.addToolBar( shapeToolBar )
@@ -53,12 +54,23 @@ class MainWindow(QMainWindow):
         actMove = modeMenu.addAction(QIcon(":/icons/move.png"), "&Move", self.move)
         actDraw = modeMenu.addAction(QIcon(":/icons/draw.png"), "&Draw", self.draw)
         actSelect = modeMenu.addAction(QIcon(":/icons/select.png"), "&Select", self.select)
+        actLasso = modeMenu.addAction(QIcon(":/icons/lasso.png"), "&Lasso", self.lasso)
 
         modeToolBar = QToolBar("Navigation")
         self.addToolBar( modeToolBar )
         modeToolBar.addAction( actMove )
         modeToolBar.addAction( actDraw )
         modeToolBar.addAction( actSelect )
+        modeToolBar.addAction( actLasso )
+
+        optionsMenu = bar.addMenu("Options")
+        actClearCanvas = optionsMenu.addAction(QIcon(":/icons/clear-all.png"), "&Clear canvas", self.clearCanvas)
+        actZoomin = optionsMenu.addAction(QIcon(":/icons/zoom-in.png"), "&Zoom in", self.zoomIn)
+        actZoomout = optionsMenu.addAction(QIcon(":/icons/zoom-out.png"), "&Zoom out", self.zoomOut)
+
+        optionsToolBar = QToolBar("Options")
+        self.addToolBar( optionsToolBar )
+        optionsToolBar.addAction( actClearCanvas )
 
     def open(self):
         print("Open...")
@@ -86,23 +98,37 @@ class MainWindow(QMainWindow):
         newAct.triggered.connect(self.quitFile)
 
     def openFile(self):
-        print("Opening file...")
+        self.log_action("Opening file...")
         fileName = QFileDialog.getOpenFileName(self, "Open File", "~/androide", "*.txt")
         print(f"{fileName[0]=}")
         file = open(fileName[0],"r")
         content = file.read()
         print(content)
-        self.textEdit.setPlainText(content) # TODO change to drawing style file
+        self.textEdit.setPlainText(content)
+        self.setWindowTitle(fileName[0])
 
     def saveFile(self):
         print("Saving file...")
         fileName = QFileDialog.getSaveFileName(self, "Save File")
         print(f"{fileName[0]=}")
         file = open(fileName[0],"w")
-        file.write(self.textEdit.toPlainText()) # TODO change 
+        file.write(self.textEdit.toPlainText())
 
     def quitFile(self):
         print("Quitting file...")
+        dlg = QMessageBox(self)
+        dlg.setWindowTitle("Quit")
+        dlg.setText("Do you wanna quit ?")
+        dlg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        dlg.setIcon(QMessageBox.Question)
+        button = dlg.exec()
+
+        if button == QMessageBox.Yes:
+            print("Yes!")
+            QApplication.quit()
+        else:
+            print("No!")
+            return "no"
 
 
 
@@ -111,16 +137,17 @@ class MainWindow(QMainWindow):
         self.log_action("choose pen color")
         color = QColorDialog.getColor()
         self.canva.set_colorPen(color)
+        self.log_action("Pen color: " + str(color))
 
     def brush_color(self):
         self.log_action("choose brush color")
         color = QColorDialog.getColor()
         self.canva.set_colorBrush(color)
+        self.log_action("Brush color: " + str(color))
 
     def rectangle(self):
         self.log_action("Shape mode: rectangle")
         self.canva.add_object("rectangle")
-
 
     def ellipse(self):
         self.log_action("Shape Mode: circle")
@@ -141,6 +168,34 @@ class MainWindow(QMainWindow):
     def select(self):
         self.log_action("Mode: select")
         self.canva.setMode("select")
+    
+    def zoomIn(self):
+        self.log_action("Zoom in")
+        self.canva.setMode("zin")
+    
+    def zoomOut(self):      
+        self.log_action("Zoom out")
+        self.canva.setMode("zout")
+
+    def lasso(self):
+        self.log_action("Mode: lasso")
+        self.canva.setMode("lasso")
+
+    def clearCanvas(self):
+        self.log_action("Mode: clear all drawings")
+        dlg = QMessageBox(self)
+        dlg.setWindowTitle("Clear all")
+        dlg.setText("Do you want to clear the canvas ?")
+        dlg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        dlg.setIcon(QMessageBox.Question)
+        button = dlg.exec()
+        if button == QMessageBox.Yes:
+            print("Yes!")
+            self.canva.clearCanvas()
+            self.textEdit.clear()
+        else:
+            print("No!")
+            return "no"
 
     def log_action(self, str):
         content = self.textEdit.toPlainText()

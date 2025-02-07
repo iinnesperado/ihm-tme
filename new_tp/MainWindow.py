@@ -65,8 +65,6 @@ class MainWindow(QMainWindow):
 
         optionsMenu = bar.addMenu("Options")
         actClearCanvas = optionsMenu.addAction(QIcon(":/icons/clear-all.png"), "&Clear canvas", self.clearCanvas)
-        actZoomin = optionsMenu.addAction(QIcon(":/icons/zoom-in.png"), "&Zoom in", self.zoomIn)
-        actZoomout = optionsMenu.addAction(QIcon(":/icons/zoom-out.png"), "&Zoom out", self.zoomOut)
 
         optionsToolBar = QToolBar("Options")
         self.addToolBar( optionsToolBar )
@@ -168,14 +166,6 @@ class MainWindow(QMainWindow):
     def select(self):
         self.log_action("Mode: select")
         self.canva.setMode("select")
-    
-    def zoomIn(self):
-        self.log_action("Zoom in")
-        self.canva.setMode("zin")
-    
-    def zoomOut(self):      
-        self.log_action("Zoom out")
-        self.canva.setMode("zout")
 
     def lasso(self):
         self.log_action("Mode: lasso")

@@ -10,6 +10,7 @@ class Canvas(QWidget):
         print("class Canvas")
         super().__init__()
         self.setMinimumSize(400,300)
+        self.canvas = QPixmap(400,300)
         self.pStart = None
         self.pEnd = None
         self.colorPen = 0
@@ -28,8 +29,10 @@ class Canvas(QWidget):
         self.free_drawings = [] 
         self.current_path = None
 
+        self.scale_factor = 1.0
+
         self.lasso = QPolygon()
-        self.laso_selection =  False
+        self.lasso_selection =  []
 
 
     def reset(self):
@@ -53,7 +56,7 @@ class Canvas(QWidget):
     def clearCanvas(self):
         self.obj = []
         self.lasso = QPolygon()
-        self.lasso_selection = False
+        self.lasso_selection = []
         self.update()
     
     #### paint event
@@ -66,7 +69,18 @@ class Canvas(QWidget):
             self.obj[self.cur_obj][3] = QColor(self.colorPen)
             self.obj[self.cur_obj][4] = QColor(self.colorBrush)
             self.obj[self.cur_obj][0] = self.shape
-            
+        
+        if self.mode == "lasso":
+            painter.setPen(Qt.DashLine)
+            if not self.lasso.isEmpty():
+                painter.drawPolygon(self.lasso)
+                for i,(_, pStart, pEnd, _, _) in enumerate(self.obj):
+                    if self.lasso.containsPoint(pStart, Qt.WindingFill) or self.lasso.containsPoint(pEnd, Qt.WindingFill):
+                        self.lasso_selection.append(self.obj[i])
+                for i in range(len(self.lasso_selection)):
+                    self.lasso_selection[i][3] = QColor(self.colorPen)
+                    self.lasso_selection[i][4] = QColor(self.colorBrush)
+                    self.lasso_selection[i][0] = self.shape
         
         for o in self.obj: # pour redessiner les formes deja dessinées
             shape, pStart, pEnd, colorPen, colorBrush = o
@@ -91,12 +105,6 @@ class Canvas(QWidget):
                     painter.setPen(QColor(self.colorPen))
                     for i in range(1, len(self.current_path)):
                         painter.drawLine(self.current_path[i - 1], self.current_path[i])
-            
-        elif self.mode == "lasso":
-            painter.setPen(Qt.gray)
-            painter.setPen(Qt.DashLine)
-            if not self.lasso.isEmpty():
-                painter.drawPolygon(self.lasso)
 
         painter.end()
 
@@ -118,8 +126,10 @@ class Canvas(QWidget):
                     self.cur_obj = i
                     print("selected ", self.obj[i])
                     break
-        '''elif self.mode == "lasso":
-            self.lasso.append(event.pos())'''
+        if self.mode == "lasso":
+            self.lasso.append(event.pos())
+        else : 
+            self.lasso = QPolygon()
         self.update()
     
     def mouseReleaseEvent(self, event):

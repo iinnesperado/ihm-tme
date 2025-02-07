@@ -88,7 +88,7 @@ class Canvas(QWidget):
                 elif self.shape == "ellipse":
                     painter.drawEllipse(QRect(self.pStart, self.pEnd))
                 elif self.shape == "free" and self.current_path:
-                    # painter.setPen(QColor(self.colorPen))
+                    painter.setPen(QColor(self.colorPen))
                     for i in range(1, len(self.current_path)):
                         painter.drawLine(self.current_path[i - 1], self.current_path[i])
             

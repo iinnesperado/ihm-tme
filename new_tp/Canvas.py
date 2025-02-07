@@ -19,7 +19,7 @@ class Canvas(QWidget):
         self.mode = "draw"
 
         self.offset = QPoint(0,0)
-        self.lastPoint = None
+        self.lastPos = None
 
         self.cur_obj = None
 
@@ -72,9 +72,8 @@ class Canvas(QWidget):
             elif shape == "ellipse":
                 painter.drawEllipse(QRect(pStart, pEnd))
         
-        for path, colorPen, colorBrush in self.free_drawings:  # Dessiner tous les anciens tracés
+        for path, colorPen in self.free_drawings:  # Dessiner tous les anciens tracés
             painter.setPen(QColor(colorPen))
-            painter.setBrush(QColor(colorBrush)) if colorBrush != 0 else painter.setBrush(Qt.NoBrush)
             for i in range(1, len(path)):
                 painter.drawLine(path[i - 1], path[i])
         
@@ -120,14 +119,17 @@ class Canvas(QWidget):
         if self.mode == "move":
             self.lastPos = None
         elif self.mode == "draw":
-            self.pEnd = event.pos()
-            self.setMouseTracking(False)
-            self.obj.append([self.shape,self.pStart, self.pEnd,self.colorPen,self.colorBrush])
-            self.pStart = None
-            self.pEnd = None
             if self.current_path and self.shape == "free":
-                self.free_drawings.append((self.current_path, self.colorPen, self.colorBrush))  # Sauvegarde le tracé
+                self.free_drawings.append((self.current_path, self.colorPen))  # Sauvegarde le tracé
                 self.current_path = None
+            else:
+                self.pEnd = event.pos()
+                self.setMouseTracking(False)
+                self.obj.append([self.shape,self.pStart, self.pEnd,self.colorPen,self.colorBrush])
+                self.pStart = None
+                self.pEnd = None
+            
+        self.setMouseTracking(False)
         self.update()
 
     
@@ -138,6 +140,8 @@ class Canvas(QWidget):
             self.lastPos = event.pos()
             self.obj = [[shape, pStart + pos, pEnd + pos, colorPen, colorBrush] 
                     for shape, pStart, pEnd, colorPen, colorBrush in self.obj]
+            self.free_drawings = [( [p + pos for p in path], colorPen)  
+                              for path, colorPen in self.free_drawings]
         elif self.mode == "draw":
             if self.shape == "free":
                 self.current_path.append(event.pos()) 

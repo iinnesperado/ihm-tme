@@ -54,6 +54,8 @@ class Canvas(QWidget):
     
     def clearCanvas(self):
         self.obj = []
+        self.cur_obj = None
+        self.free_drawings = []
         self.lasso = QPolygon()
         self.lasso_selection = []
         self.update()
@@ -66,7 +68,6 @@ class Canvas(QWidget):
 
         if self.cur_obj is not None: # pour changer la forme selectionnée
             i = self.cur_obj
-            print("selected ", self.obj[i])
             self.obj[i][3] = QColor(self.colorPen)
             self.obj[i][4] = QColor(self.colorBrush)
             pen = QPen(Qt.DashLine)
@@ -140,7 +141,6 @@ class Canvas(QWidget):
                 r = QRect(pStart, pEnd)
                 if r.contains(event.pos()):
                     self.cur_obj = i
-                    print("selected ", self.obj[i])
                     break
         if self.mode == "lasso":
             self.lasso.append(event.pos())

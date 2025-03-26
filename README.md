@@ -1,0 +1,1 @@
+Partie bonus : On peut ajouter un template en le dessinant puis en cliquant sur le bouton 'ajouter un template' il enregistra le geste dessiné avant qu'il soit remodelé avec le nom choisi par l'user. La partie load_template doit enregistré ces templates pour qu'ils soit toujoiurs présent quand on ferme la fenêtre mais la fonction ne fonctionne pas bien et est donc commenté.

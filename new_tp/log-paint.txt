@@ -1,0 +1,6 @@
+
+Shape mode: rectangle
+Shape Mode: circle
+choose brush color
+Brush color: PySide6.QtGui.QColor.fromRgbF(0.199847, 0.761501, 1.000000, 1.000000)
+choose pen color

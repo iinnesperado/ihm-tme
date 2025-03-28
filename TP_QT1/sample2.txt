@@ -1,0 +1,4 @@
+Hello World !
+This is a sample to test the openFile()
+
+I've added something new to the sample file to test the saveFile()

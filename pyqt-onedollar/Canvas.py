@@ -25,6 +25,8 @@ class Canvas(QWidget):
     # TODO 9: create a selected_template signal with three parameters: label, template_id, score
     ##########################
 
+    selected_template = Signal(str, int, float)
+
 
     def __init__(self, parent = None):
         QWidget.__init__(self, parent)
@@ -42,6 +44,10 @@ class Canvas(QWidget):
         # connect the timer to the sole timout
         #############################
 
+        self.timer = QTimer(self)
+        self.timer.setInterval(20)
+        self.timer.timeout.connect(self.timeout)
+
 
 
 
@@ -52,19 +58,19 @@ class Canvas(QWidget):
 
         if self.animation == True:
             if self.feedback != QPolygonF():
-                p.setPen(Qt.green)
-                p.setBrush(Qt.green)
+                p.setPen(Qt.blue)
+                p.setBrush(Qt.blue)
                 p.drawPolyline(self.feedback)
                 p.drawEllipse(self.feedback[0], 2, 2)
         else:
 
-            if self.path != QPolygonF():
+            if self.path != QPolygonF() and self.path.size() > 1:
                 p.setPen(Qt.blue)
                 p.setBrush(Qt.blue)
                 p.drawPolyline(self.path)
                 p.drawEllipse(self.path[0], 2, 2)
 
-            if self.termination != QPolygonF():
+            if self.termination != QPolygonF() and self.termination.size() > 1:
                 p.setPen(Qt.red)
                 p.setBrush(Qt.red)
                 p.drawPolyline(self.termination)
@@ -78,8 +84,20 @@ class Canvas(QWidget):
         self.animation = True       #used in paintEvent to know whether it displays the traces or the animated feedback
         nb_step = 100
 
+        if self.counter > nb_step:
+            self.timer.stop()
+            self.counter
+            self.animation = False
+            return
+
+        alpha = self.counter/nb_step
         #todo 11
-        # feedback = path * (1-count)/100 + termination * count/100
+        new_points = QPolygonF()
+        for p1, p2 in zip(self.path, self.termination):
+            x = p1.x() * (1-alpha) + p2.x() * alpha
+            y = p1.y() * (1-alpha) + p2.y() * alpha
+            new_points.append(QPoint(x, y))
+        self.feedback = new_points
 
 
         self.counter += 1
@@ -133,14 +151,15 @@ class Canvas(QWidget):
     def display_feedback(self, template_id):
 
         #todo 10
-        #self.termination = ...
+        self.termination = self.get_feedback(template_id)
 
         #todo 11
-        #self.path = ...
-        #self.feedback = self.path
+        self.path = points_to_qpolygonF(self.oneDollar.resampled_gesture)
+        self.feedback = QPolygonF(self.path)
 
         #create a timer
         self.counter = 0
+        self.animation = True
 
 
     ##############################
@@ -152,6 +171,7 @@ class Canvas(QWidget):
         if score > 0.5:
             self.selected_template.emit(label, template_id, score)
             self.display_feedback(template_id)
+        self.timer.start()
 
 
     ##############################

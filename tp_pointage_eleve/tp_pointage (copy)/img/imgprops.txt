@@ -1,0 +1,2 @@
+cursor.png = 12*18
+target_blue.png = 200*200

@@ -1,14 +1,2 @@
-START_EXPERIMENT, Participant 1, Date = Tue Feb 27 10:39:49 2024, Condition:D-ID-W-Ntrials
-Condition,350,6.467605550082997,4,5
-px-py-r=,1068,207,4
-x=,1066
-y=,877
-t=,1709026800.4808106
-px-py-r=,676,745,4
-x=,1065
-y=,207
-t=,1709026805.130538
-px-py-r=,1310,540,4
-x=,676
-y=,745
-t=,1709026807.1141613
+START_EXPERIMENT, Participant 1, Date = Wed Apr  2 11:43:05 2025, Condition:D-ID-W-Ntrials
+Condition,350,5.317915032380739,9,15

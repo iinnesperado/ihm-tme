@@ -119,7 +119,7 @@ def fit_models(data):
 gauss_params, emg_params = fit_models(data)
 
 plt.figure(figsize=(10, 6))
-plt.hist(data, bins=40, color="xkcd:barbie pink", alpha=0.4, label="Data")
+plt.hist(data, bins=40, density=True, color="xkcd:barbie pink", alpha=0.3, label="Data")
 
 xvals = np.linspace(min(data), max(data), 500)
 plt.plot(xvals, norm.pdf(x, *gauss_params), label= f"Gaussian (μ={gauss_params[0]:.2f}, σ={gauss_params[1]:.2f})")

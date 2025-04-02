@@ -8,23 +8,30 @@ from scipy.optimize import minimize
 def g(u, c, r):
     return c*u**r
 
-params = [(0,0),
-           (1,1), (3,1), 
+params = [ (0,6),
+           (1,0), 
+           (1,1),
            (2,1), 
            (0,1), 
            (0.5, 1), 
            (0.5, -1),
            (-1, 1),
            (-1,-1) ]
+x = np.linspace(1e-5, 10, 200)
+print(x)
 
-plt.figure(figsize=(10, 6))
+plt.figure(figsize=(7, 7))
 
 for r,c in params:
     gvalues = []
-    for i in range(1, 100):
+    for i in x:
         gvalues.append(g(i, c, r))
-    plt.plot(range(1,100), gvalues, label="c=%.1f, r=%.1f" % (c,r))
+    plt.plot(x, gvalues, label="c=%.1f, r=%.1f" % (c,r))
 
+plt.title("Evolution of g(u)=c*u^2 for different values of c and r")
+plt.xlabel("Physical device speed V_dev")
+plt.ylabel("Cursor speed V_dis")
+plt.ylim((-10, 10))
 plt.legend()
 plt.grid(True, alpha=0.2)
 # plt.show()

@@ -8,7 +8,7 @@ import random
 import time
 import subprocess
 
-from cursor import AbsoluteCursor, ConstantCDGainCursor, PolyCursor
+from cursor import AbsoluteCursor, PolyCursor, ConstantCDGainCursor, CustomCursor
 
 
 from target import TARGET
@@ -89,7 +89,12 @@ class EXPWINDOW(pyglet.window.Window):
         print("Opening" + output_file)
         ## Initialize cursor
         window = [self.width, self.height]
-        self.cursor = AbsoluteCursor(window)
+        # self.cursor = AbsoluteCursor(window)
+        # self.cursor = ConstantCDGainCursor(window, gain=1.0)
+        # Choix de 1 pour la valeur du gain car plus que ça le cursor est trop rapide 
+        # et pour une valeur inférieur trop lente
+        self.cursor = CustomCursor(window, c=2.0, r=0.9)
+
 
         ## Initialize Labels
         self.counting_string = pyglet.text.Label(
@@ -397,4 +402,32 @@ class EXPWINDOW(pyglet.window.Window):
         pass
 
     def log(self):
-        print("logging")
+        if not hasattr(self.cursor, 'buffer_x') or len(self.cursor.buffer_x) < 2:
+            return
+            
+        # Calculate speeds between consecutive points
+        speeds = []
+        distances = []
+        timestamps = []
+        
+        for i in range(1, len(self.cursor.buffer_x)):
+            dx = self.cursor.buffer_x[i] - self.cursor.buffer_x[i-1]
+            dy = self.cursor.buffer_y[i] - self.cursor.buffer_y[i-1]
+            dt = self.cursor.buffer_t[i] - self.cursor.buffer_t[i-1]
+            
+            if dt > 0:  # Avoid division by zero
+                distance = math.sqrt(dx**2 + dy**2)
+                speed = distance / dt
+                speeds.append(speed)
+                distances.append(distance)
+                timestamps.append(self.cursor.buffer_t[i])
+        
+        if not speeds:
+            return
+        
+        # Calculate statistics
+        max_speed = max(speeds)
+        min_speed = min(speeds)
+        avg_speed = sum(speeds) / len(speeds)
+
+        print(f"Logged trial {self.trial_count} - Max: {max_speed:.2f} px/s, Min: {min_speed:.2f} px/s, Avg: {avg_speed:.2f} px/s")

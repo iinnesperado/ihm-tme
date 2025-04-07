@@ -1,0 +1,17 @@
+Task 2
+On peut vérifier qu'il est bien désactiver en bougeant vite avec la souris et revenir au point de départ doucement et voir si le curseur se retrouve à la même place.
+
+Task 3
+En observant les courbes on voit qu'on à de meilleur résultat en ayant un c positif et un r compris entre 0 et 1. Plus le c augmente plus la vitesse du curseur augmente donc sa valeur dépend de la préférence de vitesse de l'utilisateur.
+
+Task 4 #a compléter
+En utilisant l'AbsoluteCursor, le minimum qu'on peut atteindre avec la souris est 0 si on clique tout de suite et le maximum
+
+Task 5 #a compléter
+En choisissant k= le mouvement semble pus confortable mais cela dépend de l'utilisateur.
+
+
+task 7 
+La classe PolyCursor permet de tester les différents curseurs en même temps et donc de les comparer.
+
+Task 8 #a compléter

@@ -89,11 +89,16 @@ class EXPWINDOW(pyglet.window.Window):
         print("Opening" + output_file)
         ## Initialize cursor
         window = [self.width, self.height]
-        # self.cursor = AbsoluteCursor(window)
+        self.cursor = AbsoluteCursor(window)
         # self.cursor = ConstantCDGainCursor(window, gain=1.0)
         # Choix de 1 pour la valeur du gain car plus que ça le cursor est trop rapide 
         # et pour une valeur inférieur trop lente
-        self.cursor = CustomCursor(window, c=2.0, r=0.9)
+        # self.cursor = CustomCursor(window, c=2.0, r=0.9)
+
+        abs_cursor = AbsoluteCursor(window)
+        cdgain_cursor = ConstantCDGainCursor(window, gain=1.0)  
+        custom_cursor = CustomCursor(window, c=2.0, r=0.9)
+        self.cursor = PolyCursor([abs_cursor, cdgain_cursor, custom_cursor])
 
 
         ## Initialize Labels

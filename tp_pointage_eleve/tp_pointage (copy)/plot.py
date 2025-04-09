@@ -115,11 +115,11 @@ def fit_models(data):
 
     print("Gaussian fit:")
     print(f"μ = {gauss_params[0]:.3f}, σ = {gauss_params[1]:.3f}")
-    print(f"Log-likelihood = {gauss_ll:.3f}\n")
+    print(f"Log-likelihood = -{gauss_ll:.3f}\n")
 
     print("EMG fit:")
     print(f"μ = {emg_params[0]:.3f}, σ = {emg_params[1]:.3f}, β = {emg_params[2]:.3f}")
-    print(f"Log-likelihood = {emg_ll:.3f}")
+    print(f"Log-likelihood = -{emg_ll:.3f}")
     
     return gauss_params, emg_params#, gauss_ll, emg_ll
 

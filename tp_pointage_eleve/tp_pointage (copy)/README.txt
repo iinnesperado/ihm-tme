@@ -36,3 +36,14 @@ La distribution gaussienne et EMG ont respectivement une log vraisemblance de -1
 
 Task 17
 La fonction EMG a donc une vraisemblance plus élevée et semble donc plus adapté à nos données cela s'explique par le fait que EMG est en général plus flexible que la gaussienne. De plus en observant le graphique montrant nos deux fonctions sur les données on voit clairement que EMG est plus adapté dans notre cas. Les meilleurs paramètre pour la gaussienne sont μ=1.05 et σ=0.72, pour EMG on a μ=0.43, σ=0.17 et β=0.62
+
+Task 19
+L'article "No More Bricolage" écrit par Casiez et al. en 2011 se penche sur l'utilisation et l'efficacité des différents outils de pointage proposés par les systèmes d'exploitation. Il critique en particulier les fonctions de transfert (Control-Display), comme celles vues dans ce TP. En effet, ces fonctions sont souvent trop simplistes et ne reflètent pas fidèlement le comportement réel des utilisateurs. Comme nous avons pu le constater, il faut prendre en compte l’adaptation progressive des utilisateurs au fil des essais. En comparant avec les fonctions utilisées par Windows, macOS ou Xorg, on remarque qu’elles sont plus complexes et optimisées, contrairement à une fonction CD linéaire. L’article souligne aussi l’importance d’outils de mesure comme libpointing, indispensables pour évaluer précisément les performances. Ce TP, centré sur la recherche expérimentale, nous a permis de découvrir comment construire une méthodologie rigoureuse, ce qui pourra être très utile dans nos futures expérimentations.
+
+
+
+
+
+
+
+
